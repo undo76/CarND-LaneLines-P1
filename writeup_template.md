@@ -15,6 +15,10 @@ The goals / steps of this project are the following:
 
 ### 1. Describe your pipeline. As part of the description, explain how you modified the draw_lines() function.
 
+My pipeline consists of 5 steps. First, I convert the image to grayscale, then I apply a gaussian blur convolution with a kernel size of 5 pixels to reduce the noise. In order to detect the borders, I apply a Canny filter with `low_threshold=30` and `high_threshold=150`. These parameters are selected to detect lines in conditions of low contrast. Then I mask out all the points that lie off a trapezium-shaped region at the bottom half of the image, before applying the Hough transform in order to detect lines in the region of interest. Then, using a modified version of `draw_lines()`, I calculate the slopes of these lines to classify them as right or left lines. I also filter out lines that are close to horizontal. Then I calculate the averages of these two sets of lines, using the least-squares method, in order to draw two single lines that will be overimposed on the original image.
+
+This is the relevant code:
+
 ```python
 img = np.copy(img_src)
 img = grayscale(img)
@@ -24,8 +28,6 @@ img = region_of_interest(img, mask)
 img = hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap)
 img = weighted_img(img, img_src, α=0.5)
 ```
-
-My pipeline consists of 5 steps. First, I convert the image to grayscale, then I apply a gaussian blur convolution with a kernel size of 5 pixels to reduce the noise. In order to detect the borders, I apply a Canny filter with `low_threshold=30` and `high_threshold=150`. These parameters are selected to detect lines in conditions of low contrast. Then I mask out all the points that lie off a trapezium-shaped region at the bottom half of the image, before applying the Hough transform in order to detect lines in the region of interest. Then, using a modified version of `draw_lines()`, I calculate the slopes of these lines to classify them as right or left lines. I also filter out lines that are close to horizontal. Then I calculate the averages of these two sets of lines, using the least-squares method, in order to draw two single lines that will be overimposed on the original image.
 
 Example of output image after applying the pipeline.
 
